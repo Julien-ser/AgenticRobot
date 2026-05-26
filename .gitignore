@@ -1,0 +1,15 @@
+# Environment & secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Freenove upstream firmware repo (download separately — see README)
+firmware_repo/
+
+# Obsidian vault notes (not part of the GitHub project)
+AgenticRobot.md
