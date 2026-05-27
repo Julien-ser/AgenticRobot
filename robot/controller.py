@@ -9,7 +9,7 @@ import time
 from .client import RobotClient
 from .commands import (
     CMD_M_MOTOR, CMD_CAR_ROTATE, CMD_LED, CMD_SERVO,
-    CMD_BUZZER, CMD_POWER, CMD_CAR_MODE, CMD_ULTRASONIC,
+    CMD_BUZZER, CMD_POWER, CMD_CAR_MODE, CMD_ULTRASONIC, CMD_OLED,
     INTERVAL_CHAR, END_CHAR,
     FORWARD, BACKWARD, STRAFE_LEFT, STRAFE_RIGHT,
     DIAGONAL_FWD_LEFT, DIAGONAL_FWD_RIGHT,
@@ -135,6 +135,17 @@ class RobotController:
             except (IndexError, ValueError):
                 pass
         return None
+
+    def display_text(self, text: str):
+        """Send text to the 0.96″ SSD1306 OLED display (firmware/oled_patch.md required).
+
+        Use \\n for line breaks — they are converted to '|' in the wire protocol
+        and re-expanded to newlines by the firmware handler.
+
+        Text capacity at default size-1 font: 21 chars × 8 lines.
+        """
+        wire_text = text.replace("\n", "|").strip()
+        self.client.send(f"{CMD_OLED}{INTERVAL_CHAR}{wire_text}{END_CHAR}")
 
     def set_mode(self, mode: int):
         """Switch operating mode (0=manual, 1=light-follow, 2=line-track, 3=sonar)."""

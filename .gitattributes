@@ -2,8 +2,11 @@
 * text=auto eol=lf
 
 # Binaries — no line-ending conversion
-*.png binary
-*.pdf binary
-*.zip binary
-*.exe binary
-*.pyc binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.mp4  binary
+*.pdf  binary
+*.zip  binary
+*.exe  binary
+*.pyc  binary

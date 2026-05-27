@@ -9,7 +9,18 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 #include <math.h>
+
+// ── 0.96″ SSD1306 OLED — GP0 (SDA, [0]) + GP1 (SCL, [1]) ──────────────────
+#define SCREEN_WIDTH  128
+#define SCREEN_HEIGHT  64
+#define OLED_RESET     -1
+#define OLED_I2C_ADDR  0x3C  // try 0x3D if blank after upload
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+bool oledReady = false;
+// ────────────────────────────────────────────────────────────────────────────
 #include "Freenove_4WD_Car_WiFi.h"
 #include "Freenove_4WD_Car_Emotion.h"
 #include "Freenove_4WD_Car_WS2812.h"
@@ -47,7 +58,19 @@ void setup() {
   WiFi_Setup(0);                //Set mode. When the parameter is 1, AP mode is enabled. If the parameter is 0, the STA mode is enabled.
   server_Cmd.begin(4002);       //Start the command server
   server_Cmd.setNoDelay(true);  //Set no delay in sending and receiving data
+  Wire.setSDA(0);  // GP0 = [0] — redirect Wire away from default GP4/GP5
+  Wire.setSCL(1);  // GP1 = [1]
   Wire.begin();
+  oledReady = display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR);
+  if (oledReady) {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 0);
+    display.println("AgenticRobot");
+    display.println("Ready.");
+    display.display();
+  }
   Motor_Setup();                   //Motor initialization
   Servo_Setup();                   //Servo initialization
   WS2812_Setup();                  //WS2812 initialization
@@ -83,6 +106,21 @@ void loop() {
           client.print("U#" + String((int)dist) + "\n");
           continue;
         }
+        // ── OLED display: W#<text>\n  (pipe '|' = newline on screen) ─────────
+        if (inputStringTemp.startsWith("W#")) {
+          if (oledReady) {
+            String msg = inputStringTemp.substring(2);
+            msg.replace("|", "\n");
+            display.clearDisplay();
+            display.setTextSize(1);
+            display.setTextColor(SSD1306_WHITE);
+            display.setCursor(0, 0);
+            display.println(msg);
+            display.display();
+          }
+          continue;
+        }
+        // ─────────────────────────────────────────────────────────────────────
         Get_Command(str);
         if (CmdArray[0] == CMD_LED_MOD)  //Set the display mode of car colored lights
         {

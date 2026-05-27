@@ -278,3 +278,24 @@ def wait(seconds: float) -> str:
     """
     time.sleep(seconds)
     return f"Waited {seconds}s"
+
+
+@mcp.tool()
+def display_text(text: str) -> str:
+    """Display a message on the robot's 0.96″ SSD1306 OLED screen.
+
+    The screen is 128×64 pixels, size-1 font = 21 chars × 8 lines.
+    Use \\n for line breaks. Text longer than 21 chars auto-wraps.
+
+    IMPORTANT: Requires the OLED firmware patch in firmware/oled_patch.md.
+
+    Good uses:
+      - Show the current task ("Scanning…", "Obstacle!", "Done ✓")
+      - Display sensor readings ("Dist: 42 cm", "Batt: 7.4 V")
+      - Print debug info while Claude is reasoning about the robot's state
+
+    Args:
+        text: Message to display. Use \\n for line breaks.
+    """
+    get_robot().display_text(text)
+    return f"OLED ← {repr(text)}"

@@ -15,6 +15,7 @@ CMD_POWER     = "P"   # Battery query:        P\n
 CMD_MATRIX_MOD = "T"  # LED matrix mode
 CMD_CAR_MODE  = "C"   # Car mode:             C#mode\n
 CMD_ULTRASONIC = "U"  # Distance query:       U\n  → U#<cm>\n  (requires firmware patch)
+CMD_OLED       = "W"  # OLED display:         W#<text>\n  (pipe '|' = newline on screen)
 
 INTERVAL_CHAR = "#"
 END_CHAR = "\n"
